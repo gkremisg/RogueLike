@@ -52,7 +52,7 @@ namespace RogueLike
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            rooms = new Room[5];
+            rooms = new Room[10];
 
             base.Initialize();
         }
@@ -126,13 +126,22 @@ namespace RogueLike
                     }
                 case GameState.NextLevel:
                     {
-                        if (currentRoom < 4)
+                        if (currentRoom < 9)
                         {
                             rooms[currentRoom + 1] = new Room(floorSprites, dungeonExitSprite, treasureSpriteSheet, rand);
                             pc.PlayerPosition = new Vector2(150,50);
                             currentRoom++;
                             currentState = GameState.Moving;
                         }
+                        else
+                        {
+                            currentState = GameState.Exit;
+                        }
+                        break;
+                    }
+                case GameState.Exit:
+                    {
+                        Exit();
                         break;
                     }
             }
@@ -148,7 +157,6 @@ namespace RogueLike
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
 
             rooms[currentRoom].Draw(spriteBatch);

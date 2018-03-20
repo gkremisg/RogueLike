@@ -21,6 +21,7 @@ namespace RogueLike
         int damageModifier;
         int hitPoints;
         int armor;
+        int characterDirection;
 
         // navigate tile array
         int tilePosX;
@@ -49,7 +50,7 @@ namespace RogueLike
             this.hitPoints = 100;
             this.baseDamage = 4;        // randomly deal between 1-4 dmg, increases with levels
             this.damageModifier = 1;    // multiply base damage, increases with levels
-            this.armor = 5;
+            this.characterDirection = 0;
         }
 
         #endregion Constructor
@@ -167,6 +168,10 @@ namespace RogueLike
 
             if (kb.IsKeyUp(Keys.A) && previousKbState.IsKeyDown(Keys.A))
             {
+
+                // character facing left
+                characterDirection = 1;
+
                 if (drawRectangle.Left > 150)
                 {
                     // check tile left of character
@@ -185,6 +190,10 @@ namespace RogueLike
 
             if (kb.IsKeyUp(Keys.D) && previousKbState.IsKeyDown(Keys.D))
             {
+
+                // character facing left
+                characterDirection = 0;
+
                 // check tile right of character
                 if (drawRectangle.Right < 650)
                 {
@@ -210,7 +219,14 @@ namespace RogueLike
         /// <param name="spriteBatch">spriteBatch</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(characterSprite, drawRectangle, Color.White);
+            if (characterDirection == 0)
+            {
+                spriteBatch.Draw(characterSprite, drawRectangle, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(characterSprite, null, drawRectangle, null, null, 0, null, Color.White, SpriteEffects.FlipHorizontally, 0);
+            }
         }
 
         #endregion Methods

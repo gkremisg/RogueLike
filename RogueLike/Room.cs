@@ -16,10 +16,11 @@ namespace RogueLike
         Tile[][] tiles;
 
         Vector2 exitPos;
-        List<Treasure> treasureList;
+        //List<Treasure> treasureList;
         List<Rectangle> listOfTileRectangles;
         List<Point> pathToExit;
-        List<Point> pathToTreasures;
+        //List<Point> pathToTreasures;
+        //List<Point> treasureLocations;
 
         #endregion Fields
 
@@ -34,14 +35,14 @@ namespace RogueLike
         /// <param name="rand">random generator</param>
         public Room(Texture2D[] floorSprites, Texture2D dungeonExitSprite, Texture2D treasureSprite, Random rand)
         {
-            exitPos = new Vector2(rand.Next(3,10), rand.Next(3,10));
+            exitPos = new Vector2(rand.Next(5,10), rand.Next(5,10));
             pathToExit = new List<Point>();
-            pathToTreasures = new List<Point>();
-            treasureList = new List<Treasure>();
+            //pathToTreasures = new List<Point>();
+            //treasureList = new List<Treasure>();
+            //treasureLocations = new List<Point>();
 
-            GenerateTreasures(treasureSprite, rand);
-
-            // CalculatePathToTreasures(rand);
+            //GenerateTreasures(treasureSprite, rand);
+            //CalculatePathToTreasures(rand);
 
             CalculatePathToExit(rand);
 
@@ -107,20 +108,21 @@ namespace RogueLike
         /// generate treasure positions in room
         /// </summary>
         /// <param name="rand"></param>
-        private void GenerateTreasures(Texture2D treasureSprite, Random rand)
-        {
-            int numberOfTreasures =rand.Next(2,4);
+        //private void GenerateTreasures(Texture2D treasureSprite, Random rand)
+        //{
+        //    int numberOfTreasures = rand.Next(0,2);
 
-            for (int i = 0; i < numberOfTreasures; i++)
-            {
-                Point treasureLocation = new Point(rand.Next(0, 10), rand.Next(0, 10));
-                while (treasureLocation == exitPos.ToPoint() || treasureLocation == Point.Zero)
-                {
-                    treasureLocation = new Point(rand.Next(0, 10), rand.Next(0, 10));
-                }
-                treasureList.Add(new Treasure(treasureSprite, treasureLocation));
-            }
-        }
+        //    for (int i = 0; i < numberOfTreasures; i++)
+        //    {
+        //        Point treasureLocation = new Point(rand.Next(0, 10), rand.Next(0, 10));
+        //        while (treasureLocation == exitPos.ToPoint() || treasureLocation == Point.Zero)
+        //        {
+        //            treasureLocation = new Point(rand.Next(0, 10), rand.Next(0, 10));
+        //        }
+        //        treasureList.Add(new Treasure(treasureSprite, treasureLocation));
+        //        treasureLocations.Add(treasureLocation);
+        //    }
+        //}
 
         /// <summary>
         /// Generates a guarenteed path to exit
@@ -192,29 +194,30 @@ namespace RogueLike
         {
             listOfTileRectangles = new List<Rectangle>();
 
-            tiles = new Tile[500 / 50][];
+            tiles = new Tile[10][];
             for (int i = 0; i < tiles.Length; i++)
             {
-                tiles[i] = new Tile[500 / 50];
+                tiles[i] = new Tile[10];
             }
 
-            Point temp = new Point(0, 0);
+            List<Point> walls = new List<Point>();
+            walls = ReservoirSamplingForWalls(rand);
 
-            List<int> walls = new List<int>();
-
-            walls = ReservoirSampling(rand);
+            // if pointForCheck is a wall but is in path to the exit
+            // don't draw the wall
+            Point pointForCheck = new Point(0, 0);
 
             for (int i = 0; i < tiles.Length; i++)
             {
                 for (int j = 0; j < tiles[i].Length; j++)
                 {
                     Vector2 tilePos = new Vector2(i, j);
-                    temp.X = i;
-                    temp.Y = j;
+                    pointForCheck.X = i;
+                    pointForCheck.Y = j;
 
-                    // generate a wall with a 30% chance if its not 
-                    // in the path to exit or a treasure
-                    if (walls.Contains(i*10+j) && !pathToExit.Contains(temp))
+                    // generate a wall if its not in 
+                    // the path to exit
+                    if (walls.Contains(pointForCheck) && !pathToExit.Contains(pointForCheck))
                     {
                         tiles[i][j] = new Tile(floorSprites, dungeonExitSprite, tilePos, true);
                         listOfTileRectangles.Add(tiles[i][j].DrawRectangle);
@@ -232,26 +235,35 @@ namespace RogueLike
         /// </summary>
         /// <param name="rand">random generator</param>
         /// <returns></returns>
-        private List<int> ReservoirSampling(Random rand)
+        private List<Point> ReservoirSamplingForWalls(Random rand)
         {
-            List<int> temp = new List<int>();
+            List<Point> wallIndexes = new List<Point>();
+            Point pointToAdd = new Point();
 
-            for (int i = 0; i < 100; i++)
+            // number of wals in dungeon
+            int wallCount = 25;
+
+            for (int i = 0; i < 10; i++)
             {
-                if (i < 35)
+                for (int j = 0; j < 10; j++)
                 {
-                    temp.Add(i);
-                }
-                else
-                {
-                    int l = rand.Next(0, i + 1);
-                    if (l < 35)
+                    if ( (i * 10 + j) < wallCount )
                     {
-                        temp[l] = i;
+                        pointToAdd.X = i;
+                        pointToAdd.Y = j;
+                        wallIndexes.Add(pointToAdd);
+                    }
+                    else
+                    {
+                        int l = rand.Next(0, (i * 10 + j + 1));
+                        if (l < wallCount)
+                        {
+                            wallIndexes[l] = new Point(i, j);
+                        }
                     }
                 }
             }
-            return temp;
+            return wallIndexes;
         }
 
         #endregion Methods
