@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 
 namespace RogueLike
 {
@@ -51,7 +50,7 @@ namespace RogueLike
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Initialization
             rooms = new Room[10];
 
             base.Initialize();
@@ -69,7 +68,7 @@ namespace RogueLike
             floorSprites = new Texture2D[2];
             collisionRectangle = new Rectangle(0, 0, 50, 50);
 
-            // TODO: use this.Content to load your game content here
+            // Load content
             floorSprites[0] = Content.Load<Texture2D>(@"graphics\floorSprite");
             floorSprites[1] = Content.Load<Texture2D>(@"graphics\floorSprite1");
             wallSprite = Content.Load<Texture2D>(@"graphics\wallSprite");
@@ -77,15 +76,6 @@ namespace RogueLike
             playerSprite = Content.Load<Texture2D>(@"graphics\playerSprite");
             monsterSprite = Content.Load<Texture2D>(@"graphics\monsterSprite");
             treasureSpriteSheet = Content.Load<Texture2D>(@"graphics\treasureSpriteSheet");           
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
